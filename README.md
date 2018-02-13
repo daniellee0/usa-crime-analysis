@@ -3,3 +3,4 @@ Final project for INFO 201.
 
 Names:
 Ciarra Hart
+Lea Quan
