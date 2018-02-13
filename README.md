@@ -2,6 +2,6 @@
 Final project for INFO 201. 
 
 **Names:**
-Ciarra Hart
-Daniel Lee
+-Ciarra Hart
+-Daniel Lee
 
