@@ -1,6 +1,7 @@
 # info201-final-project
 Final project for INFO 201.
 
-Names:
-Ciarra Hart
-Lea Quan
+**Names:**
+- Ciarra Hart
+- Daniel Lee
+- Lea Quan
