@@ -30,17 +30,20 @@ ui <- fluidPage(
                    sidebarPanel(
                     
                      # Create drop down menu for choosing a state
-                     sliderInput("Year", label = "Choose a Year", min = 2004, max = 2016, value = 2000, sep = ""),
                      
                      # Create radio button for total murders and total firearms
                      radioButtons("total.choice", label = "Choose a Total", choices = list("Total Firearms" = "Total.Firearms", "Total Murders" = "Total.Murders")),
                      
-                     # Drop down
-                     selectInput("states", label = "Choose a State:", choices = united.join.firearms$State, selected = NULL, multiple = FALSE)
-
+                     selectInput("states", label = "Choose a State:", choices = join.final$State, multiple = FALSE, selected = "washington")
+                     
                    ),
                    mainPanel(
-                     plotOutput("map")
+                     plotOutput("plot"), width = 8,
+                     
+                     p("In the plots above it shows how many murders there were in a given year in a state. While some years lacked reporting
+                       ,for instance Alabama in the past couple years, some of the data might be slightly skewed. Many factors go into how many
+                       murders are committed in a state. Some examples are, population, state gun laws about who can buy guns, crime rates that
+                       may lead to murder, and many more.")
                      
                    )
                    
