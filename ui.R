@@ -1,3 +1,7 @@
+# Source in all data tables from 2004 to 2016 for firearms
+source("firearms.R")
+
+
 ui <- fluidPage(
   navbarPage("United States Crime Data",
              #############
@@ -24,12 +28,25 @@ ui <- fluidPage(
                  sidebarLayout(
 
                    sidebarPanel(
+                    
+                     # Create drop down menu for choosing a state
+                     sliderInput("Year", label = "Choose a Year", min = 2004, max = 2016, value = 2000, sep = ""),
+                     
+                     # Create radio button for total murders and total firearms
+                     radioButtons("total.choice", label = "Choose a Total", choices = list("Total Firearms" = "Total.Firearms", "Total Murders" = "Total.Murders")),
+                     
+                     # Drop down
+                     selectInput("states", label = "Choose a State:", choices = united.join.firearms$State, selected = NULL, multiple = FALSE)
 
-                     selectInput(inputid = 'States', label = "Choose a State", choices = c("Yes", "No")  )
-
-
+                   ),
+                   mainPanel(
+                     plotOutput("map")
+                     
                    )
+                   
                  )
+                 
+                
 
 
              ),
