@@ -32,12 +32,49 @@ ui <- fluidPage(
              ##############
              ### Part 3 ###
              ##############
+             
+             # Organizes the tab for county crimes by state
              tabPanel("County Crimes By State",
+                      
+                      h2("County Crimes By State"),
+                      
+                      # Introduces the tab section
+                      p(strong("Introduction: "), "This section compares the
+                        report counts for a particular crime type between 
+                        counties within a chosen state, during a certain 
+                        year. It also encourages the understanding on 
+                        what counties may need further crime prevention
+                        and intervention, how crimes has evolved in counties
+                        over the years, and insight on actions regarding 
+                        personal safety.", align = "left"),
+                      
+                      # Bulleted list of tips for interacting with map
+                      tags$ul(
+                        
+                        tags$li("The ", em("darker"), " in color a county is, 
+                           the more crimes have been reported there."),
+                        tags$li("For counties that are ", em("grey"), ", data 
+                           was unable to be provided."),
+                        tags$li(em("Hover"), " over a county to discover below 
+                                its ", strong("county name"), " and exact ", 
+                                strong("report count"), 
+                                " for the chosen crime.")
+                      ),
+                      
+                      # Organizes two-sided layout
                       sidebarLayout(
+                        
+                        # Organizes side panel
                         sidebarPanel(
+                          
+                          # Allows user to slide and choose a year between
+                          # 2005 and 2016
                           sliderInput('slide.year', 
                                       label = "Choose a year:", min = 2005, 
                                       max = 2016, value = 2010, sep = ""),
+                          
+                          # Allows user to select a state using drop
+                          # down menu
                           selectInput('select.state', 
                                       label = "Select a state:", 
                                       choices = c("Alabama", "Arizona", 
@@ -64,28 +101,47 @@ ui <- fluidPage(
                                                   "West Virginia", "Wisconsin", 
                                                   "Wyoming"), 
                                       selected = "Washington"), 
+                          
+                          # Allows user to select a crime using drop down menu
                           selectInput('select.crime', 
-                                      label = "Choose a crime of interest:", 
+                                      label = "Select a crime of interest:", 
                                       choices = c("Murder and nonnegligent 
                                                   manslaughter" = 
-                                                    "Murder.and.nonnegligent.manslaughter", 
+                                                    "Murder.and.Nonnegligent.Manslaughter", 
                                                   "Forcible rape" = 
-                                                    "Forcible.rape", 
+                                                    "Forcible.Rape", 
                                                   "Robbery" = "Robbery", 
                                                   "Aggravated assault" = 
-                                                    "Aggravated.assault", 
+                                                    "Aggravated.Assault", 
                                                   "Burglary" = "Burglary", 
                                                   "Larceny theft" = 
-                                                    "Larceny.theft", 
+                                                    "Larceny.Theft", 
                                                   "Motor vehicle theft" = 
-                                                    "Motor.vehicle.theft", 
+                                                    "Motor.Vehicle.Theft", 
                                                   "Arson" = "Arson"), 
                                       selected = "Burglary")
                         ), 
                         
+                        # Main map panel
                         mainPanel(
-                          plotOutput('county.plot', hover = "county.plot.hover"), 
-                          verbatimTextOutput("county.plot.info")
+                          
+                          # Creates map title
+                          h3(textOutput('map.title'), align = "center"),
+                          
+                          # Creates the map itself
+                          plotOutput('county.plot', 
+                                     hover = "county.plot.hover"), 
+                          
+                          # Creates the text provided when hovering
+                          verbatimTextOutput("county.plot.info"),
+                          
+                          # Writes a disclaimer message
+                          em(p(strong("Disclaimer: "), "A significant amount of states 
+                            are missing for the 2006 data. Additionally, 
+                            the visualization above does not account for
+                            population sizes which may slightly alter
+                            the meaning of the crime report counts to
+                            be more or less severe."))
                         )
                       )
              ),
