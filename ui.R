@@ -1,10 +1,20 @@
+library(dplyr)
+library(markdown)
+
+# x - years
+# rows - state
 ui <- fluidPage(
   navbarPage("United States Crime Data",
+             fluid = TRUE,
              #############
              #### Home ###
              #############
              tabPanel("Home",
-                tags$p("Home")
+                fluidRow(
+                  column(8, includeMarkdown("home.md")),
+                  column(4, includeMarkdown("libraries.md"))
+                  
+                )
                       
                       
              ),
@@ -12,10 +22,47 @@ ui <- fluidPage(
              ##############
              ### Part 1 ###
              ##############
-             tabPanel("Tab 1",
-                tags$p("Tab 1")
+             tabPanel("Population Size",
+                      fluidRow(
+                        h3("\"Should You be Concerned about Crime Rates Based on Population Size?\""), 
+                        p("This plot displays the rate of crime or the number of 
+                          crimes that have occured based on a given year, chosen
+                          metric, and specific crime. In particular, this section
+                          answers the question of what people should be most 
+                          concerned about in regards to how population size is 
+                          or isn't related to crime prevalence.")
+                        ),
                       
-             ),
+                      fluidRow(
+                        sidebarLayout(
+                          sidebarPanel(
+                            sliderInput("year.choice", "Select a Year", 
+                                        min = 2005, max = 2016, step = 1, value = 2005,
+                                        sep = ""),
+                            selectInput("metric.choice", "Select a Metric", 
+                                        choices = c("Number of Crimes", 
+                                                    "Rate of Crimes Per 100,000"),
+                                        selected = "Number of Crimes"),        
+                            
+                            selectInput("crime.choice", "Select a Crime", 
+                                        choices = c("Violent crime",
+                                                    "Murder and nonnegligent manslaughter",
+                                                    "Robbery",
+                                                    "Aggravated assault",
+                                                    "Property crime",
+                                                    "Burglary",
+                                                    "Larceny theft",
+                                                    "Motor vehicle theft",
+                                                    "Arson"),
+                                        selected = "Violent")
+                          ),
+                          mainPanel(
+                            plotOutput('plot', click = "plot_click"),
+                            tableOutput("table")
+                          )
+                        )
+                      )
+                    ),
              
              ##############
              ### Part 2 ###
@@ -46,7 +93,9 @@ ui <- fluidPage(
                       
                       
              ),
-             p("INFO 201 | Winter 2018 | Lea Quan, Tammy Ho, Ciarra Hart, Daniel Lee", align = "center")
+             br(),
+             hr(),
+             p("INFO 201 | Winter 2018: Lea Quan, Tammy Ho, Ciarra Hart, Daniel Lee", align = "center")
   )
   
   
