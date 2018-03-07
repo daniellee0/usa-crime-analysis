@@ -3,7 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(shinyBS)
 library(plotly)
-source("population-size-data.R")
+source("data/population-size-data.R")
 
 server <- function(input, output) {
   # Redudant Code Here
