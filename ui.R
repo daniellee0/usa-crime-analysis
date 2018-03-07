@@ -40,8 +40,33 @@ ui <- fluidPage(
              ### Part 4 ###
              ##############
              tabPanel("Tab 4",
-                tags$p("Tab 4")
-                      
+                # Include a title
+                titlePanel("Hate Crime Statistics"),
+                
+                # Include a `sidebarLayout()`
+                sidebarLayout(
+                  
+                  sidebarPanel(
+                    
+                    # A slectInput labeled "Bias Motivation", with choices 
+                    # "Race", "Religion", "Sexual Orientaiton" and "Disability"
+                    selectInput(inputId = "category",
+                                label = "Bias Motivation:",
+                                choices = c("Race", "Religion", 
+                                            "Sexual Orientation", 
+                                            "Disability"),
+                                selected = "Race")
+                  ),
+                  
+                  # The layout's `mainPanel()` should have the following 
+                  # reactive outputs:
+                  mainPanel(
+                    
+                    # A line graph showing the trend of hate crime incidents
+                    plotOutput('hatecrime')
+                  )
+                )
+             )     
                       
                       
                       
@@ -51,9 +76,4 @@ ui <- fluidPage(
   
   
   
-  
-  
-  
-  
-)
 shinyUI(ui)
