@@ -89,7 +89,7 @@ ui <- fluidPage(
                         counties within a chosen state, during a certain 
                         year. It also encourages the understanding on 
                         what counties may need further crime prevention
-                        and intervention, how crimes has evolved in counties
+                        and intervention, how crimes have evolved in counties
                         over the years, and insight on actions regarding 
                         personal safety.", align = "left"),
                       
