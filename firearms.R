@@ -6,6 +6,7 @@ library(ggplot2)
 library(maps)
 
 
+# Read in all of the year data tables
 twenty.04 <- read.csv("data/firearms.2004.csv", stringsAsFactors = FALSE)
 twenty.05 <- read.csv("data/firearms.2005.csv", stringsAsFactors = FALSE)
 twenty.06 <- read.csv("data/firearms.2006.csv", stringsAsFactors = FALSE)
@@ -134,10 +135,12 @@ twenty.16.totals <- twenty.16 %>%
   select(State, Total.Murders.2016, Total.Firearms.2016) 
   
 
-# Remove empty tables in twenty.04.totals
+
 
 
 # Begin to join the tables 
+# Remove empty tables up until 2010-11 join 
+# Alabama is missing values but do not want to loose rest of data
 join.04.05 <- full_join(twenty.04.totals, twenty.05.totals, by= "State") %>% 
   na.omit()
 
@@ -167,48 +170,25 @@ join13.14 <- full_join(join.12.13, twenty.14.totals, by = "State")
 
 join14.15 <- full_join(join13.14, twenty.15.totals, by = "State") 
 
+# Remove extra data from data table and empty state columns
 join.final <- full_join(join14.15, twenty.16.totals, by = "State") %>% 
   filter(State != "District of Columbia", State != "Virgin Islands", State != "Guam", State != "U.S. Virgin Islands", State != "")
 
-
-
-
-
-
-# Need to create a data frame for each state???
-
-united.states. <- map_data("state")
-
-colnames(united.states.)[colnames(united.states.)== "region"] <- "State"
-
-lower.join.final <- sapply(join.final$State, tolower)
-
-row.names(join.final) <- lower.join.final
-
-levels(join.final$State) <- tolower(levels(join.final$State))
-
-join.final$State <- lower.join.final
-
+# Remove total.firearms from column names to prepare for gather
 names(join.final) <- sub("Total.Firearms.", "", names(join.final))
 
+# Gather for years and total firearms
 gather.firearms <- gather(join.final, key = "Year", value = "Total.Firearms", starts_with(as.character(2)))
 
+
+
+# Remove total.murders to prepare for gather
 names(gather.firearms) <- sub("Total.Murders.", "", names(gather.firearms))
 
+# Gather in year and total.murders 
 gather.final <- gather(gather.firearms, key = "Year", value = "Total.Murders", starts_with(as.character(2)))
 
-cut.murder <- mutate(gather.final, Range = cut(as.numeric(gather.final$Total.Murders), c(0,10,20,30,40,50,100,200,300,400, 500, 1000, 2000, 3000), 
-                                                      labels = c("0-10", "11-20", "21-30", "31-40", "41-50", "51-100",
-                                                                 "101-200", "201-300", "301-400", "401-500", "501-1,000", "1,001-2,000", "2,001-3,000")))
 
-cut.firearms <- mutate(gather.final, Range = cut(as.numeric(gather.final$Total.Firearms), c(0,10,20,30,40,50,100,200,300,400,500,1000,2000),
-                                                        labels = c("0-10", "11-20", "21-30", "31-40", "41-50", "51-100", "101-200", "201-300",
-                                                                   "301-400", "401-500", "501-1,000", "1,001-2,000")))
-
-
-united.join.firearms <- full_join(cut.firearms, united.states., by = "State")
-
-united.join.murders <- full_join(cut.murder, united.states., by = "State")
 
 
 

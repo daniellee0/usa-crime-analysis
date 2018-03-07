@@ -24,7 +24,7 @@ ui <- fluidPage(
              ##############
              ### Part 2 ###
              ##############
-             tabPanel("Firearms in the United States",
+             tabPanel("Firearms and Murder in the United States",
                  sidebarLayout(
 
                    sidebarPanel(
@@ -32,18 +32,31 @@ ui <- fluidPage(
                      # Create drop down menu for choosing a state
                      
                      # Create radio button for total murders and total firearms
-                     radioButtons("total.choice", label = "Choose a Total", choices = list("Total Firearms" = "Total.Firearms", "Total Murders" = "Total.Murders")),
+                     radioButtons("total.choice", label = "Choose a Total", choices = list("Total Murders by Firearms" = "Total.Firearms", "Total Murders in State" = "Total")),
                      
                      selectInput("states", label = "Choose a State:", choices = join.final$State, multiple = FALSE, selected = "washington")
                      
                    ),
                    mainPanel(
+                     p("A question many Americans are think about due to recent events is whether or not our gun laws need to be more strict.
+                       Would this prevent mass shootings, murders, and overall violence? The data below compares the total amount of murders in
+                       a state, and whether the murder was committed with a firearm or not."),
+                     br(),
                      plotOutput("plot"), width = 8,
                      
-                     p("In the plots above it shows how many murders there were in a given year in a state. While some years lacked reporting
-                       ,for instance Alabama in the past couple years, some of the data might be slightly skewed. Many factors go into how many
-                       murders are committed in a state. Some examples are, population, state gun laws about who can buy guns, crime rates that
-                       may lead to murder, and many more.")
+                     br(),
+                     
+                     p("In the plots above it shows how many murders there were in a given year in a state. Some states, like Alabama had issues with reporting
+                        murders and for this reason some of the data may be skewed."),
+                     br(),
+                     p("Some factors that could skew the data include:"),
+                     tags$ol(
+                        tags$li ("Population Size"),
+                        tags$li ("Gun Laws within the State"),
+                        tags$li ("Citizens that exercise their right to bear arms"),
+                        tags$li ("Crime within the States")
+                        ),
+                     br()
                      
                    )
                    
