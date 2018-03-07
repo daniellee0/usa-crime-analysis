@@ -30,7 +30,7 @@ server <- function(input, output) {
   ##############
   
   # Loads helper function that gets county name from hover coordinates
-  source("counties-helper.R")
+  source("data/counties-helper.R")
   
   # Loads all county crime data from 2004 to 2016
   all.counties.years <- 
