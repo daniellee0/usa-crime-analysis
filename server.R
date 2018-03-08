@@ -36,28 +36,79 @@ server <- function(input, output) {
   })
   
   population.crime <- reactive({
-    return(filter(population.size, Year == population.year()))
+    population.crime <- filter(population.size, Year == population.year())
+    return(population.crime)
+  })
+  
+  population.levels <- reactive({
+    population.levels <- factor(population.crime()$Population.group, 
+                                levels = c("1,000,000 and over (Group I subset)",
+                                           "500,000 to 999,999 (Group I subset)",
+                                           "250,000 to 499,999 (Group 1 subset)",
+                                           "GROUP II (100,000 to 249,999)",
+                                           "GROUP III (50,000 to 99,999)",
+                                           "GROUP IV (25,000 to 49,999)",
+                                           "GROUP V (10,000 to 24,999)",
+                                           "GROUP VI (under 10,000)"))
+    
+    return(population.levels)
+  })
+  
+  col.crime.choice <- reactive({
+    if (metric.choice() == "Number of Crimes") {
+      return(gsub(" ", ".", pop.crime.choice(), fixed = TRUE)) 
+    } else {
+      crime.choice <- gsub(" ", ".", pop.crime.choice(), fixed = TRUE) %>% 
+        paste0(".rate") 
+      return(crime.choice)
+    }
+  })
+  
+  output$population.year <- renderText({
+    return(population.year())
+  })
+  
+  output$metric.choice <- renderText({
+    return(tolower(metric.choice()))
+  })
+  
+  output$pop.crime.choice <- renderText({
+    return(tolower(pop.crime.choice()))
+  })
+  
+  significant.value <- reactive({
+    significant.value <- select(population.crime(), col.crime.choice()) %>% 
+      max()
+    return(significant.value)
+  })
+  
+  output$sig.value <- renderText({
+    return(significant.value())
+  })
+  
+  output$pop.size <- renderText({
+    col <- as.symbol(col.crime.choice())
+    pop.size <- filter(population.crime(), (!!col) == significant.value()) %>% 
+      select(Population.group)
+    return(paste0(pop.size))
   })
   
   output$plot <- renderPlot({
     if (metric.choice() == "Number of Crimes") {
-      crime.choice <- gsub(" ", ".", pop.crime.choice(), fixed = TRUE)  
       y.axis.label <- "Number of Crimes (in all cities)"
     } else {
-      crime.choice <- gsub(" ", ".", pop.crime.choice(), fixed = TRUE) %>% 
-        paste0(".rate")
       y.axis.label <- "Rate of Crimes Per 100,000 People"
     }
-
+    
     # A ggplot that represents the plotted map.
     population.size.plot <- ggplot(population.crime(),
-                                   aes_string(x = "Population.group",
-                                              y = crime.choice,
-                                              fill = crime.choice)) +
+                                   aes_string(x = population.levels(),
+                                              y = col.crime.choice(),
+                                              fill = col.crime.choice())) +
       ggtitle(paste0("Plot of Rate Per 100,000 People / Number of ",
                           pop.crime.choice(), " in All Cities")) +
       geom_bar(stat = "identity") +
-      scale_fill_gradient(low="#FF8888",high="#FF0000") +
+      scale_fill_gradient(name = y.axis.label, low="#FF8888",high="#FF0000") +
       scale_y_continuous(y.axis.label) +
       
       scale_x_discrete("City Population Size",
@@ -77,22 +128,20 @@ server <- function(input, output) {
                                   = "10,000 to 24,999",
                                   "GROUP VI (under 10,000)"
                                   = "under 10,000")) +
-      theme(axis.text.x=element_text(angle=35, hjust=1))
-    
-
+      theme(axis.text.x=element_text(angle=25, hjust=1))
     return(population.size.plot)
-
   })
   
-  output$table <- renderTable({
-    ##magic happens here##
-    output$table <- renderTable({
-      carb <- unique(population.crime()$Population.group)
-      carb <- carb[order(carb)]
-      x <- carb[round(input$plot_click$x)]
-      population.crime[factor(population.crime()$Population.group) == x,]
-    })
+  
+  output$x_value <- renderText({
+    if (is.null(input$plot_click$x)) {
+      return("Please select a value")
+    }
     
+    x.value <- population.levels()[round(input$plot_click$x)]
+    y.value <- filter(population.crime(), Population.group == x.value) %>% 
+      select(col.crime.choice())
+    paste0("Selection: ", x.value, "\n", metric.choice(), ": ", y.value)
   })
 
   

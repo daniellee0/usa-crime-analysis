@@ -24,12 +24,16 @@ ui <- fluidPage(
              ##############
              tabPanel("Population Size",
                       fluidRow(
-                        h3("\"Should You be Concerned about Crime Rates Based on Population Size?\""), 
-                        p("This plot displays the rate of crime or the number of 
-                          crimes that have occured based on a given year, chosen
-                          metric, and specific crime. In particular, this section
-                          answers the question of what people should be most 
-                          concerned about in regards to how population size is 
+                        h3("Crimes by Population Size"), 
+                        p("This section analyzes the effect of population size
+                          on the frequency of crime and whether or not people
+                          should be concerned about crime in their particular
+                          city. This section displays the rate of crime per 
+                          100,000 people or the number of crimes that have  
+                          occured based on a given year, chosen metric, and  
+                          specific crime. In particular, this section answers  
+                          the question of what people should be most concerned 
+                          about in regards to how population size is 
                           or isn't related to crime prevalence.")
                         ),
                       
@@ -37,11 +41,13 @@ ui <- fluidPage(
                         sidebarLayout(
                           sidebarPanel(
                             sliderInput("year.choice", "Select a Year", 
-                                        min = 2005, max = 2016, step = 1, value = 2005,
+                                        min = 2005, max = 2016, step = 1,
+                                        value = 2005,
                                         sep = ""),
                             selectInput("metric.choice", "Select a Metric", 
                                         choices = c("Number of Crimes", 
-                                                    "Rate of Crimes Per 100,000"),
+                                                    "Rate of Crimes Per 
+                                                    100,000"),
                                         selected = "Number of Crimes"),        
                             
                             selectInput("crime.choice", "Select a Crime", 
@@ -56,9 +62,20 @@ ui <- fluidPage(
                                                     "Arson"),
                                         selected = "Violent")
                           ),
+                          
                           mainPanel(
                             plotOutput('plot', click = "plot_click"),
-                            tableOutput("table")
+                            verbatimTextOutput("x_value"),
+                            p("Based on the ", 
+                              textOutput("metric.choice", inline = TRUE), 
+                              " of ", 
+                              textOutput("pop.crime.choice", inline = TRUE),
+                              " in ", textOutput("population.year", 
+                                                 inline = TRUE), 
+                              " the value of concern is ", 
+                              textOutput("sig.value", inline = TRUE), 
+                              ". This crime value comes from cities that
+                              have a population size of ", textOutput("pop.size", inline = TRUE))
                           )
                         )
                       )
