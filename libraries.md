@@ -1,3 +1,13 @@
+## Original Data Set
+The original data source can be accessed [here.](https://ucr.fbi.gov/crime-in-the-u.s)
+
+## Authors
+
+- Tammy Ho
+- Ciarra Hart
+- Daniel Lee
+- Lea Quan
+
 ## Libraries
 
 Below is a list of the libraries and packages used for this project:
