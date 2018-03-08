@@ -4,6 +4,7 @@ library(ggplot2)
 library(shinyBS)
 library(plotly)
 source("data/population-size-data.R")
+source("firearms.R")
 
 server <- function(input, output) {
   # Redudant Code Here
@@ -155,31 +156,35 @@ server <- function(input, output) {
   # Create plot for total murders per year
   output$plot <- renderPlot({
     
-    if(input$states == ""){
-      filtered <- gather.final %>% 
-        filter(State == input$states) %>% 
-        select(State,Year, Total.Firearms, Total.Murders)
+    # if(input$states == ""){
+    #   filtered <- gather.final %>% 
+    #     filter(State == input$states) %>% 
+    #     select(State,Year, Total.Firearms, Total.Murders)
+    #   
+    # } else {
+    #   filtered <- gather.final %>% 
+    #     filter(input$states == State) %>% 
+    #     select(State, Year, Total.Murders, Total.Firearms)
       
-    } else {
-      
-      filtered <- gather.final %>% 
+    # }
+    
+    filtered <- reactive({
+      filtered <- join.firearms.murders %>% 
         filter(input$states == State) %>% 
         select(State, Year, Total.Murders, Total.Firearms)
-      
-    }
+      return(filtered)
+    })
+    
     # Create ggplot of murders per year based on state
-    ggplot(data = filtered, aes(x= as.numeric(Year), Y= Total.Murders)) + 
+    ggplot(data = filtered(), aes(x= as.numeric(Year), Y= Total.Murders)) + 
       geom_point(mapping = aes(y= as.numeric(Total.Murders)), color = "red") +
       geom_point(mapping = aes(y= as.numeric(Total.Firearms)), color = "green") +
       ggtitle("Total Number of Murders per Year") +
       labs(x= "Years", y= "Number of Murders")
-    
-   filtered <- join.firearms.murders %>% 
-     filter(input$states == State) %>% 
-     select(State, Year, Total.Murders, Total.Firearms)
+  
     
  # Create ggplot of murders per year based on state
-   ggplot(data = filtered) + 
+   ggplot(data = filtered()) + 
     geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
     geom_smooth(aes(x= Year, y= Total.Murders)) +
     geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
