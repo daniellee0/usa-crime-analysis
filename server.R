@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 library(dplyr)
 library(ggplot2)
 library(shinyBS)
@@ -5,6 +6,13 @@ library(plotly)
 library(shiny)
 library(maps)
 source("data/population-size-data.R")
+=======
+# Redundant Code here
+library("dplyr")
+library("shinythemes")
+source("firearms.R")
+
+>>>>>>> firearms
 
 server <- function(input, output) {
   # Redudant Code Here
@@ -105,6 +113,7 @@ server <- function(input, output) {
   ### Part 2 ###
   ##############
   
+<<<<<<< HEAD
   # Loads helper function that gets county name from hover coordinates
   source("data/counties-helper.R")
   
@@ -159,6 +168,75 @@ server <- function(input, output) {
     chosen.county <- unlist(strsplit(chosen.county, ","))[2]
     
     return(chosen.county)
+=======
+<<<<<<< HEAD
+# Create plot for total murders per year
+output$plot <- renderPlot({
+  
+  if(input$states == ""){
+    filtered <- join.firearms.murders %>% 
+      filter(State == input$states) %>% 
+      select(State,Year, Total.Firearms, Total.Murders)
+=======
+  # Create plot for total murders per year
+  output$plot <- renderPlot({
+>>>>>>> bfda9472b7f9c81a45694cd928e38927d31a58dd
+    
+    if(input$states == ""){
+      filtered <- gather.final %>% 
+        filter(State == input$states) %>% 
+        select(State,Year, Total.Firearms, Total.Murders)
+      
+    } else {
+      
+      filtered <- gather.final %>% 
+        filter(input$states == State) %>% 
+        select(State, Year, Total.Murders, Total.Firearms)
+      
+    }
+    # Create ggplot of murders per year based on state
+    ggplot(data = filtered, aes(x= as.numeric(Year), Y= Total.Murders)) + 
+      geom_point(mapping = aes(y= as.numeric(Total.Murders)), color = "red") +
+      geom_point(mapping = aes(y= as.numeric(Total.Firearms)), color = "green") +
+      ggtitle("Total Number of Murders per Year") +
+      labs(x= "Years", y= "Number of Murders")
+    
+<<<<<<< HEAD
+   filtered <- join.firearms.murders %>% 
+     filter(input$states == State) %>% 
+     select(State, Year, Total.Murders, Total.Firearms)
+    
+  }
+ # Create ggplot of murders per year based on state
+   ggplot(data = filtered) + 
+    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
+    geom_smooth(aes(x= Year, y= Total.Murders)) +
+    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
+    geom_smooth(aes(x= Year, y= Total.Firearms)) +
+    ggtitle("Total Number of Murders per Year") +
+    labs(x= "Years", y= "Number of Murders")
+  
+    })
+output$analysis <- renderText({
+  
+  crime <- join.firearms.murders %>% 
+    filter(input$states == State, "2016" == Year) %>% 
+    select(Total.Firearms, Total.Murders) %>% 
+    summarise(value = Total.Firearms / Total.Murders) 
+
+    
+  
+  
+  sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
+                     This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
+    
+    return(sentence)
+
+})
+
+=======
+    
+>>>>>>> firearms
   })
   
   # Returns the number of reportings for the chosen crime 
@@ -171,6 +249,7 @@ server <- function(input, output) {
     return(crime.report.count)
   })
   
+<<<<<<< HEAD
   # Returns the chosen crime 
   chosen.crime.text <- reactive({
     chosen.crime <- gsub("\\.", " ", input$select.crime)
@@ -236,6 +315,10 @@ server <- function(input, output) {
     
     return(statement)
   })
+=======
+>>>>>>> bfda9472b7f9c81a45694cd928e38927d31a58dd
+  
+>>>>>>> firearms
   
   ##############
   ### Part 3 ###
@@ -255,7 +338,7 @@ server <- function(input, output) {
   
   
   
-
+  
 }
 
 shinyServer(server)
