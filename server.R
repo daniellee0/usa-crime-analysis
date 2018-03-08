@@ -44,7 +44,7 @@ server <- function(input, output) {
     population.levels <- factor(population.crime()$Population.group, 
                                 levels = c("1,000,000 and over (Group I subset)",
                                            "500,000 to 999,999 (Group I subset)",
-                                           "250,000 to 499,999 (Group 1 subset)",
+                                           "250,000 to 499,999 (Group I subset)",
                                            "GROUP II (100,000 to 249,999)",
                                            "GROUP III (50,000 to 99,999)",
                                            "GROUP IV (25,000 to 49,999)",
@@ -116,7 +116,7 @@ server <- function(input, output) {
                                   = "1,000,000 and over",
                                   "500,000 to 999,999 (Group I subset)"
                                   = "500,000 to 999,999",
-                                  "250,000 to 499,999 (Group 1 subset)"
+                                  "250,000 to 499,999 (Group I subset)"
                                   = "250,000 to 499,999",
                                   "GROUP II (100,000 to 249,999)"
                                   = "100,000 to 249,999",
