@@ -34,17 +34,27 @@ ui <- fluidPage(
                      
                    ),
                    mainPanel(
-                     p("A question many Americans are think about due to recent events is whether or not our gun laws need to be more strict.
+                     br(), # Insert break
+                     
+                     p(tags$strong("Introduction:"),"A question many Americans are think about due to recent events is whether or not our gun laws need to be more strict.
                        Would this prevent mass shootings, murders, and overall violence? The data below compares the total amount of murders in
                        a state, and whether the murder was committed with a firearm or not."),
-                     br(),
+                     
+                     br(), # Insert break
+                     
                      plotOutput("plot"), width = 8,
+                     
+                     br(), # Insert break
+                     
+                     tags$i("Alabama had no data reported for 2011. Small amounts of reported data for years 2012-2016."),
                      
                      br(),
                      
                      p("In the plots above it shows how many murders there were in a given year in a state. Some states, like Alabama had issues with reporting
                         murders and for this reason some of the data may be skewed."),
-                     br(),
+                     
+                     br(), # Insert break
+                     
                      p("Some factors that could skew the data include:"),
                      tags$ol(
                         tags$li ("Population Size"),
@@ -52,9 +62,11 @@ ui <- fluidPage(
                         tags$li ("Citizens that exercise their right to bear arms"),
                         tags$li ("Crime within the States")
                         ),
-                     br(),
+                     br(), # Insert break
                      
-                     textOutput("analysis")
+                     textOutput("analysis"),
+                     
+                     br() # Insert break
                      
                       
                      

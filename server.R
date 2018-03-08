@@ -55,12 +55,19 @@ output$plot <- renderPlot({
   
     })
 output$analysis <- renderText({
+  
   crime <- join.firearms.murders %>% 
-    filter(input$states == State, "2016" == Year)
+    filter(input$states == State, "2016" == Year) %>% 
+    select(Total.Firearms, Total.Murders) %>% 
+    summarise(value = Total.Firearms / Total.Murders) 
+
+    
   
   
+  sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
+                     This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
     
-    
+    return(sentence)
 
 })
 
