@@ -1,23 +1,14 @@
-# Redundant Code here
 library(dplyr)
 library(ggplot2)
 library(shinyBS)
 library(plotly)
+library(markdown)
+library(shiny)
+library(shinythemes)
 source("data/population-size-data.R")
 source("firearms.R")
 
 server <- function(input, output) {
-  # Redudant Code Here
-  
-  
-  
-  
-  #############
-  #### Home ###
-  #############
-  
-  
-  
   
   ##############
   ### Part 1 ###
@@ -154,18 +145,6 @@ server <- function(input, output) {
   ### Part 2 ###
   ##############
   # Create plot for total murders per year
-    
-    # if(input$states == ""){
-    #   filtered <- gather.final %>% 
-    #     filter(State == input$states) %>% 
-    #     select(State,Year, Total.Firearms, Total.Murders)
-    #   
-    # } else {
-    #   filtered <- gather.final %>% 
-    #     filter(input$states == State) %>% 
-    #     select(State, Year, Total.Murders, Total.Firearms)
-      
-    # }
     
     output$plot <- renderPlot({
     

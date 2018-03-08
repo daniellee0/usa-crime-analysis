@@ -1,28 +1,26 @@
-library(dplyr)
-library(markdown)
-library(shiny)
-library(shinythemes)
-
 ui <- fluidPage(theme = shinytheme("united"),
-  navbarPage("United States Crime Data",
+  navbarPage("United States Crime Analysis",
              fluid = TRUE,
+             
              #############
              #### Home ###
              #############
              tabPanel("Home",
-                fluidRow(
-                  column(8, includeMarkdown("home.md")),
-                  column(4, includeMarkdown("logo.md"))
-                )
-
-
-             ),
+                      fluidRow(
+                        column(8, includeMarkdown("home.md")),
+                        column(4, includeMarkdown("logo.md"))
+                        )
+                      ),
 
              ##############
              ### Part 1 ###
              ##############
+             # Create tab for population size
              tabPanel("Population Size",
+                      
+                      # Organizes by fluid layout
                       fluidRow(
+                        
                         h3("Crimes by Population Size"), 
                         p("This section analyzes the effect of a city's 
                           population size on the frequency of crime and whether 
@@ -38,12 +36,18 @@ ui <- fluidPage(theme = shinytheme("united"),
                         ),
                       
                       fluidRow(
+                        
+                        # Organize by sidebars
                         sidebarLayout(
+                          
                           sidebarPanel(
+                            
+                            # User inputs
                             sliderInput("year.choice", "Select a Year", 
                                         min = 2005, max = 2016, step = 1,
                                         value = 2005,
                                         sep = ""),
+                            
                             selectInput("metric.choice", "Select a Metric", 
                                         choices = c("Number of Crimes", 
                                                     "Rate of Crimes Per 
@@ -63,8 +67,11 @@ ui <- fluidPage(theme = shinytheme("united"),
                                         selected = "Violent")
                           ),
                           
+                          # Contains plot output with click interactions
                           mainPanel(
-                            plotOutput('population.plot', click = "plot_click"),
+                            
+                            plotOutput('population.plot', 
+                                       click = "plot_click"),
                             verbatimTextOutput("x_value"),
                             p("Based on the ", 
                               textOutput("metric.choice", inline = TRUE), 
@@ -75,7 +82,8 @@ ui <- fluidPage(theme = shinytheme("united"),
                               " the value of concern is ", 
                               textOutput("sig.value", inline = TRUE), 
                               ". This crime value comes from cities that
-                              have a population size of ", textOutput("pop.size", inline = TRUE))
+                              have a population size of ", 
+                              textOutput("pop.size", inline = TRUE))
                           )
                         )
                       )
@@ -84,56 +92,63 @@ ui <- fluidPage(theme = shinytheme("united"),
              ##############
              ### Part 2 ###
              ##############
+             # Create tab for Firearms and Murder in the US
              tabPanel("Firearms and Murder in the United States",
-                 sidebarLayout(
-
-                   sidebarPanel(
-                    
-                     # Create drop down menu for choosing a states
-                     selectInput("states", label = "Choose a State:", choices = join.final$State, multiple = FALSE, selected = "Washington")
-                     
-                   ),
-                   mainPanel(
-                     br(), # Insert break
-                     
-                     p(tags$strong("Introduction:"),"A question many Americans are think about due to recent events is whether or not our gun laws need to be more strict.
-                       Would this prevent mass shootings, murders, and overall violence? The data below compares the total amount of murders in
-                       a state, and whether the murder was committed with a firearm or not."),
-                     
-                     br(), # Insert break
-                     
-                     plotOutput("plot"), width = 8,
-                     
-                     br(), # Insert break
-                     
-                     tags$i("Alabama had no data reported for 2011. Small amounts of reported data for years 2012-2016."),
-                     
-                     br(),
-                     
-                     p("In the plots above it shows how many murders there were in a given year in a state. Some states, like Alabama had issues with reporting
-                        murders and for this reason some of the data may be skewed."),
-                     
-                     br(), # Insert break
-                     
-                     p("Some factors that could skew the data include:"),
-                     tags$ol(
-                        tags$li ("Population Size"),
-                        tags$li ("Gun Laws within the State"),
-                        tags$li ("Citizens that exercise their right to bear arms"),
-                        tags$li ("Crime within the States")
-                        ),
-                     br(), # Insert break
-                     
-                     textOutput("analysis"),
-                     
-                     br() # Insert break
-                     
-                      
-                     
-                   )
-                   
-                 )
-             ),
+                      sidebarLayout(
+                        sidebarPanel(
+                          
+                          # Create drop down menu for choosing a states
+                          selectInput("states", label = "Choose a State:", 
+                                      multiple = FALSE, 
+                                      selected = "Washington")
+                          ),
+                        mainPanel(
+                          br(), # Insert break
+                          p(tags$strong("Introduction:"),"A question many 
+                          Americans are think about due to recent events is  
+                          whether or not our gun laws need to be more strict.
+                          Would this prevent mass shootings, murders, and 
+                          overall violence? The data below compares the total  
+                          amount of murders in a state, and whether the murder 
+                          was committed with a firearm or not."),
+                          
+                          br(), # Insert break
+                          
+                          plotOutput("plot"), width = 8,
+                          
+                          br(), # Insert break
+                          
+                          tags$i("Alabama had no data reported for 2011. Small 
+                            amounts of reported data for years 2012-2016."),
+                          
+                          br(),
+                          
+                          p("In the plots above it shows how many murders there 
+                          were in a given year in a state. Some states, like 
+                          Alabama had issues with reporting murders and for  
+                          this reason some of the data may be skewed."),
+                          
+                          br(), # Insert break
+                          
+                          p("Some factors that could skew the data include:"),
+                          
+                          tags$ol(
+                            tags$li ("Population Size"),
+                            tags$li ("Gun Laws within the State"),
+                            tags$li ("Citizens that exercise their right to 
+                                 bear arms"),
+                            tags$li ("Crime within the States")
+                            
+                            ),
+                          
+                          br(), # Insert break
+                          
+                          textOutput("analysis"),
+                          
+                          br() # Insert break
+                          )
+                        )
+                      ),
 
              ##############
              ### Part 3 ###
@@ -247,11 +262,11 @@ ui <- fluidPage(theme = shinytheme("united"),
                           br(),
                           
                           # Writes a disclaimer message
-                          em(p(strong("Disclaimer: "), "A significant amount of states 
-                            are missing for the 2006 data. Additionally, 
-                            the visualization above does not account for
-                            population sizes which may slightly alter
-                            the meaning of the crime report counts to
+                          em(p(strong("Disclaimer: "), "A significant amount
+                            of states are missing for the 2006 data. 
+                            Additionally, the visualization above does not 
+                            account for population sizes which may slightly 
+                            alter the meaning of the crime report counts to
                             be more or less severe."))
                         )
                       )
@@ -261,84 +276,90 @@ ui <- fluidPage(theme = shinytheme("united"),
              ### Part 4 ###
              ##############
              tabPanel("Hate Crimes By Category",
-                # Include a title
-                titlePanel("Hate Crime Statistics"),
-                
-                # introduce the section
-                p(strong("Introduction: "), "This section compares the
-                  number of incidents for hate crimes against 
-                  different populations from 2005 to 2016. The question we
-                  hope to answer is how do the trends we see over time
-                  correspond to real world events? These trends should give 
-                  individuals a better sense of the tensions that exist 
-                  toward different groups. They should aslo help law enforcement initiate 
-                  preventative programs to defuse these tensions.", 
-                  align = "left"),
-                
-                # Include a `sidebarLayout()`
-                sidebarLayout(
-                  
-                  sidebarPanel(
-                    
-                    # A slectInput labeled "Category", with choices 
-                    # "Race", "Religion", "Sexual Orientaiton" and "Disability"
-                    selectInput(inputId = "category",
-                                label = "Category:",
-                                choices = c("Race", "Religion", 
-                                            "Sexual Orientation", 
-                                            "Disability"),
-                                selected = "Race")
-                  ),
-                  
-                  # The layout's `mainPanel()` should have the following 
-                  # reactive outputs:
-                  mainPanel(
-                    
-                    # A line graph showing the trend of hate crime incidents
-                    plotOutput('hatecrime'),
-                    # Analysis paragraph for Race graph
-                    p(strong("Race: "), "The graph shows a steady trend
-                      for most of the ethnic groups. However, there is 
-                      a dramatic drop for hate crimes against African
-                      Americans starting from 2008, which is when president 
-                      Obama was elected, until 2016.", 
+                      # Include a title
+                      titlePanel("Hate Crime Statistics"),
+                      
+                      # introduce the section
+                      p(strong("Introduction: "), "This section compares the
+                      number of incidents for hate crimes against 
+                      different populations from 2005 to 2016. The question we
+                      hope to answer is how do the trends we see over time
+                      correspond to real world events? These trends should give 
+                      individuals a better sense of the tensions that exist 
+                      toward different groups. They should aslo help law 
+                      enforcement initiate preventative programs to defuse 
+                      these tensions.", 
                       align = "left"),
-                    # Analysis paragraph for Religion graph
-                    p(strong("Religion: "), "The graph shows that anti-islamic
-                      incidents increased dramaticly after 2014, which is when 
-                      the Islamic State seized large swathes of territory in
-                      Syria and Iraq. On the other hand, anti-Jewish incidents
-                      had dropped since 2008.", 
-                      align = "left"),
-                    # Analysis paragraph for Sexual Orientation graph
-                    p(strong("Sexual Orientation: "), "The graph shows 
-                      that the number of anti-homosexual incidents dropped steadily
-                      since 2011 when New York became the largest state to allow
-                      same-sex marriage.", align = "left"),
-                    # Analysis paragraph for Disability graph
-                    p(strong("Disability: "), "The graph shows 
-                      a huge drop for anti-mental disability incidents in 2010.
-                      The year in which The Equality Act was passed
-                       to protect people with disabilities and prevent disability 
-                      discrimination. However, the number bounced back up from
-                      2010 to 2012.", align = "left"),
-                    br(),
-                    # Writes a disclaimer message
-                    em(p(strong("Disclaimer: "), "The categories above were
-                            provided by the FBI publications. It does not
+                      
+                      # Include a `sidebarLayout()
+                      sidebarLayout(
+                        sidebarPanel(
+                          
+                          # A slectInput labeled "Category", with choices
+                          # "Race", "Religion", "Sexual Orientaiton" and 
+                          # "Disability"
+                          selectInput(inputId = "category",
+                                      label = "Category:",
+                                      choices = c("Race", "Religion",
+                                                  "Sexual Orientation", 
+                                                  "Disability"),
+                                      selected = "Race")
+                          ),
+                        
+                        # The layout's `mainPanel()` should have the following
+                        # reactive outputs:
+                        mainPanel(
+                          
+                          # A line graph showing the trend of hate crime 
+                          # incidents
+                          plotOutput('hatecrime'),
+
+                          p(strong("Race: "), "The graph shows a steady trend
+                          for most of the ethnic groups. However, there is 
+                          a dramatic drop for hate crimes against African
+                          Americans starting from 2008, which is when president 
+                          Obama was elected, until 2016.", 
+                          align = "left"),
+                          
+                          # Analysis paragraph for Religion graph
+                          p(strong("Religion: "), "The graph shows that 
+                          anti-islamic incidents increased dramaticly after  
+                          2014, which is when the Islamic State seized large 
+                          swathes of territory in Syria and Iraq. On the other 
+                          hand, anti-Jewish incidents had dropped since 2008.", 
+                          align = "left"),
+                          
+                          # Analysis paragraph for Sexual Orientation graph
+                          p(strong("Sexual Orientation: "), "The graph shows 
+                          that the number of anti-homosexual incidents dropped 
+                          steadily since 2011 when New York became the largest 
+                          state to allow same-sex marriage.", align = "left"),
+                          
+                          # Analysis paragraph for Disability graph
+                          p(strong("Disability: "), "The graph shows 
+                          a huge drop for anti-mental disability incidents in 
+                          2010. The year in which The Equality Act was passed
+                          to protect people with disabilities and prevent  
+                          disability discrimination. However, the number  
+                          bounced back up from 2010 to 2012.", align = "left"),
+                          
+                          br(),
+                          
+                          # Writes a disclaimer message
+                          m(p(strong("Disclaimer: "), "The categories above 
+                            were provided by the FBI publications. It does not
                             include all the hate crimes against each group.
                             Additionally, the visualization above does not 
                             account for the population size for each group
                             which may slightly alter the meaning of the crime 
                             report."))
-                  )
-                )
-                  
-             ),
+                          )
+                        )
+                      ),
              br(),
              hr(),
-             p("INFO 201 | Winter 2018: Lea Quan, Tammy Ho, Ciarra Hart, Daniel Lee", align = "center")
+             p("INFO 201 | Winter 2018: Lea Quan, Tammy Ho, Ciarra Hart, 
+               Daniel Lee", align = "center")
+             )
   )
-)
-
 shinyUI(ui)
