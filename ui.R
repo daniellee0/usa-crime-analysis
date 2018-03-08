@@ -1,4 +1,4 @@
-library(shiny)
+library('shiny')
 library("shinythemes")
 # To load some ui elements
 source("firearms.R")
