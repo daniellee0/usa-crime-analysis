@@ -1,5 +1,7 @@
 library(shiny)
 library("shinythemes")
+# To load some ui elements
+source("firearms.R")
 ui <- fluidPage(theme = shinytheme("flatly"),
   navbarPage("United States Crime Analysis",
              fluid = TRUE,

@@ -173,7 +173,8 @@ join14.15 <- full_join(join13.14, twenty.15.totals, by = "State")
 
 # Remove extra data from data table and empty state columns
 join.final <- full_join(join14.15, twenty.16.totals, by = "State") %>% 
-  filter(State != "District of Columbia", State != "Virgin Islands", State != "Guam", State != "U.S. Virgin Islands", State != "")
+  filter(State != "District of Columbia", State != "Virgin Islands", 
+         State != "Guam", State != "U.S. Virgin Islands", State != "")
 
 # Create table for murders only
 murders <- join.final %>% 
@@ -193,10 +194,12 @@ firearms <- join.final %>%
 names(firearms) <- sub("Total.Firearms.", "", names(firearms))
 
 # Gather in year and total.murders 
-gather.firearms <- gather(firearms, key = "Year", value = "Total.Firearms", 2:14)
+gather.firearms <- gather(firearms, key = "Year", value = "Total.Firearms",
+                          2:14)
 
 # Join firearms and murders by state and year now
-join.firearms.murders <- full_join(gather.firearms, murders.gather, by = c("State" = "State", "Year" = "Year"))
+join.firearms.murders <- full_join(gather.firearms, murders.gather, 
+                                   by = c("State" = "State", "Year" = "Year"))
 
 
 
