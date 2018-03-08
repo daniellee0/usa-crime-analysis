@@ -13,6 +13,7 @@ Below is a list of the libraries and packages used for this project:
 **Data Visualization**
 
 - `shiny`: builds interactive web applications from R data
+- `shinytheme`: formats Shiny application's overall theme from various Bootstrap themes
 - `ggplot2`: a plotting system based on the grammar of graphics for creating static graphics
 - `shinyBS`: adds pop-up windows and tooltips to Shiny application
 - `plotly`: creates interactive web-based applications
