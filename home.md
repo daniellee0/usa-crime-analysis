@@ -15,5 +15,3 @@ The targeted audience for this application is geared towards those who wonder if
 
   4. How do the trends of hate crimes over time correspond to real world events??
   
-  
-Shiny Link: https://daniellee.shinyapps.io/info201-final-project/

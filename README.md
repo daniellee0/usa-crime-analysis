@@ -11,3 +11,5 @@ The purpose of this project is to understand the general crime trends as well as
 
 ## Special Instructions
 The "Home" tab of this application presents a general overview of our project, including its main goals. The next four tabs includes textual and visual explanations to the corresponding critical questions about the data set that are listed in the "Home" section. The last tab, which is "References", provides links to the original data set, lists the application's authors, and describes the packages/libraries used in the application.
+  
+Shiny Link: https://daniellee.shinyapps.io/info201-final-project/
