@@ -13,4 +13,4 @@ The targeted audience for this application is geared towards those who wonder if
 
   3. Which counties in a particular state have the most crime reports within 2005 to 2016? In other words, which counties are "safer" than others?
 
-  4. how do the trends of hate crimes over time correspond to real world events??
+  4. How do the trends of hate crimes over time correspond to real world events??

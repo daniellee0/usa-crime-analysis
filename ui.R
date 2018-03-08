@@ -81,7 +81,28 @@ ui <- fluidPage(theme = shinytheme("flatly"),
                             textOutput("sig.value", inline = TRUE), 
                             ". This crime value comes from cities that
                             have a population size of ", 
-                            textOutput("pop.size", inline = TRUE))
+                            textOutput("pop.size", inline = TRUE), 
+                            ". When the chosen metric is rate per 100,000
+                            people, the relationship between population 
+                            size and crime rate for most crimes is not entirely  
+                            linear. This shows that population size does not 
+                            necessarily correlate with increased crime rate, 
+                            and people should be more concerned with cities
+                            that have a population of less than 1,000,000. 
+                            A factor that could explain this result is
+                            a lack of strong police force. Without one, cities
+                            outside major metropolitan statistical areas
+                            are neglected and allow crime to flourish to a 
+                            greater extent. When the chosen metric is number of 
+                            crimes, the relationship between population size 
+                            and the number of crimes is only more strongly 
+                            pronounced in violent crime. Non-violent crime 
+                            is much more prevalent in smaller cities and 
+                            indicates that a lack of a strong police force 
+                            or socioeconomic factors are at play. In general,
+                            a chosen year did not hold very much weight in 
+                            changing any relationship between population size
+                            and the metric.")
                           )
                         )
                       ),
