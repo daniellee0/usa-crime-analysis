@@ -105,6 +105,11 @@ server <- function(input, output) {
   ### Part 2 ###
   ##############
   
+  
+  ##############
+  ### Part 3 ###
+  ##############
+  
   # Loads helper function that gets county name from hover coordinates
   source("data/counties-helper.R")
   
@@ -195,7 +200,7 @@ server <- function(input, output) {
   output$county.plot.info <- renderText({
     statement <- paste0(toupper(hovered.county()), " COUNTY", "\n", 
                         "Number of Reports: ", chosen.crime.count())
-      
+    
     return(statement)
   })
   
@@ -236,15 +241,6 @@ server <- function(input, output) {
     
     return(statement)
   })
-  
-  ##############
-  ### Part 3 ###
-  ##############
-  
-  
-  
-  
-  
   
   ##############
   ### Part 4 ###
