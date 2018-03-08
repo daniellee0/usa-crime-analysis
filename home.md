@@ -9,7 +9,7 @@
 
   2.
 
-  3. Which counties in a particular state have the most crime reports within 2005 to 2016?
+  3. Which counties in a particular state have the most crime reports within 2005 to 2016? In other words, which counties are "safer" than others?
 
   4.
 
