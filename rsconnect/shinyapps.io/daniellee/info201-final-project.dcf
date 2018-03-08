@@ -5,8 +5,8 @@ account: daniellee
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 295786
-bundleId: 1259210
+bundleId: 1259221
 url: https://daniellee.shinyapps.io/info201-final-project/
-when: 1520518452.71169
+when: 1520518792.45167
 asMultiple: FALSE
 asStatic: FALSE

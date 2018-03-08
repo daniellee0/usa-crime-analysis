@@ -5,7 +5,6 @@ library(plotly)
 library(markdown)
 library(maps)
 source("data/population-size-data.R")
-# source("firearms.R")
 
 server <- function(input, output) {
   

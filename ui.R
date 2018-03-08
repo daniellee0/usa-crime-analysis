@@ -21,7 +21,7 @@ ui <- fluidPage(theme = shinytheme("flatly"),
              ##############
              # Create tab for population size
              tabPanel("Population Size", 
-                      h2("Crimes by Population Size"), 
+                      h2("Crimes By Population Size"), 
                       p(tags$strong("Introduction:"),
                         "This section analyzes the effect of a city's 
                         population size on the frequency of crime and whether 
