@@ -1,18 +1,9 @@
-<<<<<<< HEAD
+# Redundant Code here
 library(dplyr)
 library(ggplot2)
 library(shinyBS)
 library(plotly)
-library(shiny)
-library(maps)
 source("data/population-size-data.R")
-=======
-# Redundant Code here
-library("dplyr")
-library("shinythemes")
-source("firearms.R")
-
->>>>>>> firearms
 
 server <- function(input, output) {
   # Redudant Code Here
@@ -45,28 +36,79 @@ server <- function(input, output) {
   })
   
   population.crime <- reactive({
-    return(filter(population.size, Year == population.year()))
+    population.crime <- filter(population.size, Year == population.year())
+    return(population.crime)
   })
   
-  output$plot <- renderPlot({
+  population.levels <- reactive({
+    population.levels <- factor(population.crime()$Population.group, 
+                                levels = c("1,000,000 and over (Group I subset)",
+                                           "500,000 to 999,999 (Group I subset)",
+                                           "250,000 to 499,999 (Group I subset)",
+                                           "GROUP II (100,000 to 249,999)",
+                                           "GROUP III (50,000 to 99,999)",
+                                           "GROUP IV (25,000 to 49,999)",
+                                           "GROUP V (10,000 to 24,999)",
+                                           "GROUP VI (under 10,000)"))
+    
+    return(population.levels)
+  })
+  
+  col.crime.choice <- reactive({
     if (metric.choice() == "Number of Crimes") {
-      crime.choice <- gsub(" ", ".", pop.crime.choice(), fixed = TRUE)  
-      y.axis.label <- "Number of Crimes (in all cities)"
+      return(gsub(" ", ".", pop.crime.choice(), fixed = TRUE)) 
     } else {
       crime.choice <- gsub(" ", ".", pop.crime.choice(), fixed = TRUE) %>% 
-        paste0(".rate")
+        paste0(".rate") 
+      return(crime.choice)
+    }
+  })
+  
+  output$population.year <- renderText({
+    return(population.year())
+  })
+  
+  output$metric.choice <- renderText({
+    return(tolower(metric.choice()))
+  })
+  
+  output$pop.crime.choice <- renderText({
+    return(tolower(pop.crime.choice()))
+  })
+  
+  significant.value <- reactive({
+    significant.value <- select(population.crime(), col.crime.choice()) %>% 
+      max()
+    return(significant.value)
+  })
+  
+  output$sig.value <- renderText({
+    return(significant.value())
+  })
+  
+  output$pop.size <- renderText({
+    col <- as.symbol(col.crime.choice())
+    pop.size <- filter(population.crime(), (!!col) == significant.value()) %>% 
+      select(Population.group)
+    return(paste0(pop.size))
+  })
+  
+  output$population.plot <- renderPlot({
+    if (metric.choice() == "Number of Crimes") {
+      y.axis.label <- "Number of Crimes (in all cities)"
+    } else {
       y.axis.label <- "Rate of Crimes Per 100,000 People"
     }
-
+    
     # A ggplot that represents the plotted map.
     population.size.plot <- ggplot(population.crime(),
-                                   aes_string(x = "Population.group",
-                                              y = crime.choice,
-                                              fill = crime.choice)) +
+                                   aes_string(x = population.levels(),
+                                              y = col.crime.choice(),
+                                              fill = col.crime.choice())) +
       ggtitle(paste0("Plot of Rate Per 100,000 People / Number of ",
                           pop.crime.choice(), " in All Cities")) +
       geom_bar(stat = "identity") +
-      scale_fill_gradient(low="#FF8888",high="#FF0000") +
+      scale_fill_gradient(name = y.axis.label, low="#FF8888",high="#FF0000") +
       scale_y_continuous(y.axis.label) +
       
       scale_x_discrete("City Population Size",
@@ -74,7 +116,7 @@ server <- function(input, output) {
                                   = "1,000,000 and over",
                                   "500,000 to 999,999 (Group I subset)"
                                   = "500,000 to 999,999",
-                                  "250,000 to 499,999 (Group 1 subset)"
+                                  "250,000 to 499,999 (Group I subset)"
                                   = "250,000 to 499,999",
                                   "GROUP II (100,000 to 249,999)"
                                   = "100,000 to 249,999",
@@ -86,22 +128,20 @@ server <- function(input, output) {
                                   = "10,000 to 24,999",
                                   "GROUP VI (under 10,000)"
                                   = "under 10,000")) +
-      theme(axis.text.x=element_text(angle=35, hjust=1))
-    
-
+      theme(axis.text.x=element_text(angle=25, hjust=1))
     return(population.size.plot)
-
   })
   
-  output$table <- renderTable({
-    ##magic happens here##
-    output$table <- renderTable({
-      carb <- unique(population.crime()$Population.group)
-      carb <- carb[order(carb)]
-      x <- carb[round(input$plot_click$x)]
-      population.crime[factor(population.crime()$Population.group) == x,]
-    })
+  
+  output$x_value <- renderText({
+    if (is.null(input$plot_click$x)) {
+      return("Please select a value")
+    }
     
+    x.value <- population.levels()[round(input$plot_click$x)]
+    y.value <- filter(population.crime(), Population.group == x.value) %>% 
+      select(col.crime.choice())
+    paste0("Selection: ", x.value, "\n", metric.choice(), ": ", y.value)
   })
 
   
@@ -112,8 +152,60 @@ server <- function(input, output) {
   ##############
   ### Part 2 ###
   ##############
+  # Create plot for total murders per year
+  output$plot <- renderPlot({
+    
+    if(input$states == ""){
+      filtered <- gather.final %>% 
+        filter(State == input$states) %>% 
+        select(State,Year, Total.Firearms, Total.Murders)
+      
+    } else {
+      
+      filtered <- gather.final %>% 
+        filter(input$states == State) %>% 
+        select(State, Year, Total.Murders, Total.Firearms)
+      
+    }
+    # Create ggplot of murders per year based on state
+    ggplot(data = filtered, aes(x= as.numeric(Year), Y= Total.Murders)) + 
+      geom_point(mapping = aes(y= as.numeric(Total.Murders)), color = "red") +
+      geom_point(mapping = aes(y= as.numeric(Total.Firearms)), color = "green") +
+      ggtitle("Total Number of Murders per Year") +
+      labs(x= "Years", y= "Number of Murders")
+    
+   filtered <- join.firearms.murders %>% 
+     filter(input$states == State) %>% 
+     select(State, Year, Total.Murders, Total.Firearms)
+    
+ # Create ggplot of murders per year based on state
+   ggplot(data = filtered) + 
+    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
+    geom_smooth(aes(x= Year, y= Total.Murders)) +
+    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
+    geom_smooth(aes(x= Year, y= Total.Firearms)) +
+    ggtitle("Total Number of Murders per Year") +
+    labs(x= "Years", y= "Number of Murders")
   
-<<<<<<< HEAD
+    })
+  output$analysis <- renderText({
+    crime <- join.firearms.murders %>% 
+      filter(input$states == State, "2016" == Year) %>% 
+      select(Total.Firearms, Total.Murders) %>% 
+      summarise(value = Total.Firearms / Total.Murders) 
+
+      sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
+                     This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
+  
+    return(sentence)
+  })
+  
+  
+  
+  
+  ##############
+  ### Part 3 ###
+  ##############
   # Loads helper function that gets county name from hover coordinates
   source("data/counties-helper.R")
   
@@ -168,75 +260,6 @@ server <- function(input, output) {
     chosen.county <- unlist(strsplit(chosen.county, ","))[2]
     
     return(chosen.county)
-=======
-<<<<<<< HEAD
-# Create plot for total murders per year
-output$plot <- renderPlot({
-  
-  if(input$states == ""){
-    filtered <- join.firearms.murders %>% 
-      filter(State == input$states) %>% 
-      select(State,Year, Total.Firearms, Total.Murders)
-=======
-  # Create plot for total murders per year
-  output$plot <- renderPlot({
->>>>>>> bfda9472b7f9c81a45694cd928e38927d31a58dd
-    
-    if(input$states == ""){
-      filtered <- gather.final %>% 
-        filter(State == input$states) %>% 
-        select(State,Year, Total.Firearms, Total.Murders)
-      
-    } else {
-      
-      filtered <- gather.final %>% 
-        filter(input$states == State) %>% 
-        select(State, Year, Total.Murders, Total.Firearms)
-      
-    }
-    # Create ggplot of murders per year based on state
-    ggplot(data = filtered, aes(x= as.numeric(Year), Y= Total.Murders)) + 
-      geom_point(mapping = aes(y= as.numeric(Total.Murders)), color = "red") +
-      geom_point(mapping = aes(y= as.numeric(Total.Firearms)), color = "green") +
-      ggtitle("Total Number of Murders per Year") +
-      labs(x= "Years", y= "Number of Murders")
-    
-<<<<<<< HEAD
-   filtered <- join.firearms.murders %>% 
-     filter(input$states == State) %>% 
-     select(State, Year, Total.Murders, Total.Firearms)
-    
-  }
- # Create ggplot of murders per year based on state
-   ggplot(data = filtered) + 
-    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
-    geom_smooth(aes(x= Year, y= Total.Murders)) +
-    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
-    geom_smooth(aes(x= Year, y= Total.Firearms)) +
-    ggtitle("Total Number of Murders per Year") +
-    labs(x= "Years", y= "Number of Murders")
-  
-    })
-output$analysis <- renderText({
-  
-  crime <- join.firearms.murders %>% 
-    filter(input$states == State, "2016" == Year) %>% 
-    select(Total.Firearms, Total.Murders) %>% 
-    summarise(value = Total.Firearms / Total.Murders) 
-
-    
-  
-  
-  sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
-                     This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
-    
-    return(sentence)
-
-})
-
-=======
-    
->>>>>>> firearms
   })
   
   # Returns the number of reportings for the chosen crime 
@@ -249,7 +272,6 @@ output$analysis <- renderText({
     return(crime.report.count)
   })
   
-<<<<<<< HEAD
   # Returns the chosen crime 
   chosen.crime.text <- reactive({
     chosen.crime <- gsub("\\.", " ", input$select.crime)
@@ -274,7 +296,7 @@ output$analysis <- renderText({
   output$county.plot.info <- renderText({
     statement <- paste0(toupper(hovered.county()), " COUNTY", "\n", 
                         "Number of Reports: ", chosen.crime.count())
-      
+    
     return(statement)
   })
   
@@ -315,15 +337,6 @@ output$analysis <- renderText({
     
     return(statement)
   })
-=======
->>>>>>> bfda9472b7f9c81a45694cd928e38927d31a58dd
-  
->>>>>>> firearms
-  
-  ##############
-  ### Part 3 ###
-  ##############
-  
   
   
   
@@ -332,13 +345,29 @@ output$analysis <- renderText({
   ##############
   ### Part 4 ###
   ##############
+  # read in the hate crime data from 2005-2016
+  source("data/hate-crime-data.R")
   
+  # filter the data by category, flip rows and columns and melt the data frame
+  # in order to plot line graph
+  filtered <- reactive({
+    table <- hatecrime[hatecrime$Category == input$category, c("Bias.motivation", 2005:2016)]
+    hatecrime.data <- data.frame(t(table[-1]))
+    colnames(hatecrime.data) <- table[, 1]
+    hatecrime.data$year <- rownames(hatecrime.data)
+    melted <- melt(hatecrime.data, id.vars = "year")
+    return(melted)
+  })
   
-  
-  
-  
-  
-  
-}
+    # create the line graph 
+    output$hatecrime <- renderPlot({
+      ggplot(data = filtered(), aes(x = year, y = value, group = variable)) +
+        geom_line() +
+        geom_point() +
+        geom_line(aes(color = variable)) +
+        geom_point(aes(color = variable)) +
+      scale_color_brewer(palette = "Set1")
+      })
 
+}
 shinyServer(server)
