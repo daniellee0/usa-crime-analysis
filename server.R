@@ -154,7 +154,6 @@ server <- function(input, output) {
   ### Part 2 ###
   ##############
   # Create plot for total murders per year
-  output$plot <- renderPlot({
     
     # if(input$states == ""){
     #   filtered <- gather.final %>% 
@@ -168,41 +167,47 @@ server <- function(input, output) {
       
     # }
     
-    filtered <- reactive({
-      filtered <- join.firearms.murders %>% 
-        filter(input$states == State) %>% 
-        select(State, Year, Total.Murders, Total.Firearms)
-      return(filtered)
-    })
+    output$plot <- renderPlot({
     
-    # Create ggplot of murders per year based on state
-    ggplot(data = filtered(), aes(x= as.numeric(Year), Y= Total.Murders)) + 
-      geom_point(mapping = aes(y= as.numeric(Total.Murders)), color = "red") +
-      geom_point(mapping = aes(y= as.numeric(Total.Firearms)), color = "green") +
+    if(input$states == ""){
+     filtered <- join.firearms.murders %>% 
+        filter(State == input$states) %>% 
+        select(State,Year, Total.Firearms, Total.Murders)
+      
+    } else {
+      
+    filtered <- join.firearms.murders %>% 
+       filter(input$states == State) %>% 
+       select(State, Year, Total.Murders, Total.Firearms)
+      
+    }
+   # Create ggplot of murders per year based on state
+    ggplot(data = filtered) + 
+     geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
+     geom_smooth(aes(x= Year, y= Total.Murders)) +
+     geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
+     geom_smooth(aes(x= Year, y= Total.Firearms)) +
       ggtitle("Total Number of Murders per Year") +
       labs(x= "Years", y= "Number of Murders")
-  
+ 
     
- # Create ggplot of murders per year based on state
-   ggplot(data = filtered()) + 
-    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
-    geom_smooth(aes(x= Year, y= Total.Murders)) +
-    geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
-    geom_smooth(aes(x= Year, y= Total.Firearms)) +
-    ggtitle("Total Number of Murders per Year") +
-    labs(x= "Years", y= "Number of Murders")
-  
-    })
+ })
   output$analysis <- renderText({
+   
     crime <- join.firearms.murders %>% 
-      filter(input$states == State, "2016" == Year) %>% 
-      select(Total.Firearms, Total.Murders) %>% 
-      summarise(value = Total.Firearms / Total.Murders) 
-
-      sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
-                     This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
+     filter(input$states == State, "2016" == Year) %>% 
+     select(Total.Firearms, Total.Murders) %>% 
+     summarise(value = Total.Firearms / Total.Murders) 
+ 
+     
+    
+    
+   sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
+                      This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
+      
+     
+     return(sentence)
   
-    return(sentence)
   })
   
   
