@@ -1,10 +1,11 @@
 library(dplyr)
 library(markdown)
 library(shiny)
+library(shinythemes)
 
 # x - years
 # rows - state
-ui <- fluidPage(
+ui <- fluidPage(theme = shinytheme("united"),
   navbarPage("United States Crime Data",
              fluid = TRUE,
              #############
@@ -13,8 +14,7 @@ ui <- fluidPage(
              tabPanel("Home",
                 fluidRow(
                   column(8, includeMarkdown("home.md")),
-                  column(4, includeMarkdown("libraries.md"))
-                  
+                  column(4, includeMarkdown("logo.md"))
                 )
                       
                       
@@ -98,8 +98,8 @@ ui <- fluidPage(
                         
                         tags$li("The ", em("darker"), " in color a county is, 
                            the more crimes have been reported there."),
-                        tags$li("For counties that are ", em("grey"), ", data 
-                           was unable to be provided."),
+                        tags$li("Data was unable to be provided for counties 
+                           that are", em("grey.")),
                         tags$li(em("Hover"), " over a county to discover below 
                                 its ", strong("county name"), " and exact ", 
                                 strong("report count"), 
@@ -180,6 +180,11 @@ ui <- fluidPage(
                           # Creates the text provided when hovering
                           verbatimTextOutput("county.plot.info"),
                           
+                          # Writes an analysis statement
+                          textOutput('analysis.statement'),
+                          
+                          br(),
+                          
                           # Writes a disclaimer message
                           em(p(strong("Disclaimer: "), "A significant amount of states 
                             are missing for the 2006 data. Additionally, 
@@ -201,17 +206,14 @@ ui <- fluidPage(
                       
                       
              ),
+             
+             tabPanel("References",
+                      includeMarkdown("libraries.md")
+             ),
              br(),
              hr(),
              p("INFO 201 | Winter 2018: Lea Quan, Tammy Ho, Ciarra Hart, Daniel Lee", align = "center")
   )
-  
-  
-  
-  
-  
-  
-  
 )
 
 shinyUI(ui)
