@@ -25,16 +25,17 @@ ui <- fluidPage(
              tabPanel("Population Size",
                       fluidRow(
                         h3("Crimes by Population Size"), 
-                        p("This section analyzes the effect of population size
-                          on the frequency of crime and whether or not people
-                          should be concerned about crime in their particular
-                          city. This section displays the rate of crime per 
-                          100,000 people or the number of crimes that have  
-                          occured based on a given year, chosen metric, and  
-                          specific crime. In particular, this section answers  
-                          the question of what people should be most concerned 
-                          about in regards to how population size is 
-                          or isn't related to crime prevalence.")
+                        p("This section analyzes the effect of a city's 
+                          population size on the frequency of crime and whether 
+                          or not people should be concerned about crimes  
+                          relative to other population sizes. This section  
+                          displays the rate of crime per 100,000 people or   
+                          the number of crimes that have occured based on a   
+                          given year, chosen metric, and specific crime. In   
+                          particular, this section answers the question of what 
+                           people should be most concerned about in regards 
+                          to how population size is or isn't related to crime 
+                          prevalence.")
                         ),
                       
                       fluidRow(
