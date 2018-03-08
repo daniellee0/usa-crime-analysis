@@ -1,9 +1,9 @@
-library(dplyr)
-library(ggplot2)
-library(shinyBS)
-library(plotly)
-library(markdown)
-library(maps)
+library("dplyr")
+library("ggplot2")
+library("shinyBS")
+library("plotly")
+library("markdown")
+library("maps")
 source("data/population-size-data.R")
 
 server <- function(input, output) {
