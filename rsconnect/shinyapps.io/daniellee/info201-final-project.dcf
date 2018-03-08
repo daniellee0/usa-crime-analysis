@@ -1,0 +1,12 @@
+name: info201-final-project
+title: info201-final-project
+username:
+account: daniellee
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 295786
+bundleId: 1259184
+url: https://daniellee.shinyapps.io/info201-final-project/
+when: 1520517509.91956
+asMultiple: FALSE
+asStatic: FALSE

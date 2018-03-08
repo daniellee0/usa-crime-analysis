@@ -3,18 +3,17 @@ library(ggplot2)
 library(shinyBS)
 library(plotly)
 library(markdown)
-library(shiny)
-library(shinythemes)
+library(maps)
 source("data/population-size-data.R")
 source("firearms.R")
 
 server <- function(input, output) {
   
   ##############
-  ### Part 1 ###
+  ### Part 1 ### Population Size Crime
   ##############
   
-  # Find maximum values for each plot in order to create dynamic analysis
+  # Reactive variables to store input
   population.year <- reactive({
     return(input$year.choice)
   })
@@ -27,11 +26,15 @@ server <- function(input, output) {
     return(input$crime.choice)
   })
   
+  # Reactive variable representing filtering population crime data table based 
+  # on input year
   population.crime <- reactive({
     population.crime <- filter(population.size, Year == population.year())
     return(population.crime)
   })
   
+  # Reactive variable representing factors of different population groups, used
+  # for plot
   population.levels <- reactive({
     population.levels <- factor(population.crime()$Population.group, 
                                 levels = c("1,000,000 and over (Group I subset)",
@@ -46,6 +49,8 @@ server <- function(input, output) {
     return(population.levels)
   })
   
+  # Reactive variable representing crime choice input in the form of a column  
+  # in the datatable
   col.crime.choice <- reactive({
     if (metric.choice() == "Number of Crimes") {
       return(gsub(" ", ".", pop.crime.choice(), fixed = TRUE)) 
@@ -56,6 +61,7 @@ server <- function(input, output) {
     }
   })
   
+  # Output variables returning inputs
   output$population.year <- renderText({
     return(population.year())
   })
@@ -68,16 +74,19 @@ server <- function(input, output) {
     return(tolower(pop.crime.choice()))
   })
   
+  # Reactive variable returning significant values
   significant.value <- reactive({
     significant.value <- select(population.crime(), col.crime.choice()) %>% 
       max()
     return(significant.value)
   })
   
+  # Output that returns text for the significant value
   output$sig.value <- renderText({
     return(significant.value())
   })
   
+  # Output that returns the population size for the significant value
   output$pop.size <- renderText({
     col <- as.symbol(col.crime.choice())
     pop.size <- filter(population.crime(), (!!col) == significant.value()) %>% 
@@ -85,6 +94,7 @@ server <- function(input, output) {
     return(paste0(pop.size))
   })
   
+  # Output using ggplot that represents 
   output$population.plot <- renderPlot({
     if (metric.choice() == "Number of Crimes") {
       y.axis.label <- "Number of Crimes (in all cities)"
@@ -92,7 +102,8 @@ server <- function(input, output) {
       y.axis.label <- "Rate of Crimes Per 100,000 People"
     }
     
-    # A ggplot that represents the plotted map.
+    # A ggplot that represents the plotted map for number of crime / crime
+    # rate based on two inputs: crime choice and year choice
     population.size.plot <- ggplot(population.crime(),
                                    aes_string(x = population.levels(),
                                               y = col.crime.choice(),
@@ -102,7 +113,6 @@ server <- function(input, output) {
       geom_bar(stat = "identity") +
       scale_fill_gradient(name = y.axis.label, low="#FF8888",high="#FF0000") +
       scale_y_continuous(y.axis.label) +
-      
       scale_x_discrete("City Population Size",
                        labels = c("1,000,000 and over (Group I subset)"
                                   = "1,000,000 and over",
@@ -122,79 +132,74 @@ server <- function(input, output) {
                                   = "under 10,000")) +
       theme(axis.text.x=element_text(angle=25, hjust=1))
     return(population.size.plot)
+    
   })
   
-  
+  # Returns the x value (bar plot value)
   output$x_value <- renderText({
     if (is.null(input$plot_click$x)) {
-      return("Please select a value")
+      return("Please select a bar value")
     }
     
     x.value <- population.levels()[round(input$plot_click$x)]
     y.value <- filter(population.crime(), Population.group == x.value) %>% 
       select(col.crime.choice())
     paste0("Selection: ", x.value, "\n", metric.choice(), ": ", y.value)
-  })
+    })
 
-  
-  
-  
-  
-  
+
   ##############
-  ### Part 2 ###
+  ### Part 2 ### Firearm / Murder Crime
   ##############
   # Create plot for total murders per year
-    
-    output$plot <- renderPlot({
-    
+  output$plot <- renderPlot({
     if(input$states == ""){
-     filtered <- join.firearms.murders %>% 
-        filter(State == input$states) %>% 
+      filtered <- join.firearms.murders %>%
+        filter(State == input$states) %>%
         select(State,Year, Total.Firearms, Total.Murders)
-      
-    } else {
-      
-    filtered <- join.firearms.murders %>% 
-       filter(input$states == State) %>% 
-       select(State, Year, Total.Murders, Total.Firearms)
-      
-    }
-   # Create ggplot of murders per year based on state
+      } else {
+        filtered <- join.firearms.murders %>%
+          filter(input$states == State) %>% 
+          select(State, Year, Total.Murders, Total.Firearms)
+        
+      }
+    
+    # Create ggplot of murders per year based on state
     ggplot(data = filtered) + 
-     geom_point(mapping = aes(x = Year, y= as.numeric(Total.Murders)), color = "red") +
-     geom_smooth(aes(x= Year, y= Total.Murders)) +
-     geom_point(mapping = aes(x = Year, y= as.numeric(Total.Firearms)), color = "blue") +
-     geom_smooth(aes(x= Year, y= Total.Firearms)) +
+      geom_point(aes(x = as.numeric(Year), y= Total.Murders,
+                              color = "Total Murders")) +
+      geom_point(aes(x = as.numeric(Year), y= Total.Firearms,
+                            color = "Murders with Firearms")) +
+      scale_color_manual(name = "Murder Category", 
+                        labels = c("Murders with Firearms", "Total Murders"),
+                        values = c("red", "blue")) +
+     geom_smooth(data = filtered, aes(x= as.numeric(Year), 
+                                      y= as.numeric(Total.Murders)), color = "blue") +
+     geom_smooth(data = filtered, aes(x= as.numeric(Year), 
+                                      y= as.numeric(Total.Firearms)), color = "red") +
       ggtitle("Total Number of Murders per Year") +
       labs(x= "Years", y= "Number of Murders")
- 
-    
- })
+    })
+  
+  # Output analysis for the question
   output$analysis <- renderText({
-   
     crime <- join.firearms.murders %>% 
      filter(input$states == State, "2016" == Year) %>% 
      select(Total.Firearms, Total.Murders) %>% 
      summarise(value = Total.Firearms / Total.Murders) 
- 
-     
-    
-    
-   sentence <- paste0("The percentage of murders by firearms is ", signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
-                      This shows how often firearms are appart of murders and could be used as evidence towards stricter gun laws.")
-      
-     
+
+   sentence <- paste0("The percentage of murders by firearms is ", 
+    signif(crime, digits = 2)*100, "% in 2016 in ", input$states, ".
+                      This shows how often firearms are appart of murders 
+    and could be used as evidence towards stricter gun laws.")
      return(sentence)
-  
   })
   
-  
-  
-  
+
   ##############
-  ### Part 3 ###
+  ### Part 3 ### County Crime
   ##############
+  
   # Loads helper function that gets county name from hover coordinates
   source("data/counties-helper.R")
   
@@ -327,12 +332,8 @@ server <- function(input, output) {
     return(statement)
   })
   
-  
-  
-  
-  
   ##############
-  ### Part 4 ###
+  ### Part 4 ### Hate Crime
   ##############
   # read in the hate crime data from 2005-2016
   source("data/hate-crime-data.R")
@@ -340,7 +341,8 @@ server <- function(input, output) {
   # filter the data by category, flip rows and columns and melt the data frame
   # in order to plot line graph
   filtered <- reactive({
-    table <- hatecrime[hatecrime$Category == input$category, c("Bias.motivation", 2005:2016)]
+    table <- hatecrime[hatecrime$Category == input$category, 
+                       c("Bias.motivation", 2005:2016)]
     hatecrime.data <- data.frame(t(table[-1]))
     colnames(hatecrime.data) <- table[, 1]
     hatecrime.data$year <- rownames(hatecrime.data)

@@ -1,4 +1,6 @@
-ui <- fluidPage(theme = shinytheme("united"),
+library(shiny)
+library("shinythemes")
+ui <- fluidPage(theme = shinytheme("flatly"),
   navbarPage("United States Crime Analysis",
              fluid = TRUE,
              
@@ -16,103 +18,97 @@ ui <- fluidPage(theme = shinytheme("united"),
              ### Part 1 ###
              ##############
              # Create tab for population size
-             tabPanel("Population Size",
-                      
-                      # Organizes by fluid layout
-                      fluidRow(
-                        
-                        h3("Crimes by Population Size"), 
-                        p("This section analyzes the effect of a city's 
-                          population size on the frequency of crime and whether 
-                          or not people should be concerned about crimes  
-                          relative to other population sizes. This section  
-                          displays the rate of crime per 100,000 people or   
-                          the number of crimes that have occured based on a   
-                          given year, chosen metric, and specific crime. In   
-                          particular, this section answers the question of what 
-                           people should be most concerned about in regards 
-                          to how population size is or isn't related to crime 
-                          prevalence.")
-                        ),
-                      
-                      fluidRow(
-                        
+             tabPanel("Population Size", 
+                      h2("Crimes by Population Size"), 
+                      p(tags$strong("Introduction:"),
+                        "This section analyzes the effect of a city's 
+                        population size on the frequency of crime and whether 
+                        or not people should be concerned about crimes  
+                        relative to other population sizes. This section  
+                        displays the rate of crime per 100,000 people or   
+                        the number of crimes that have occured based on a   
+                        given year, chosen metric, and specific crime. In   
+                        particular, this section answers the question of what 
+                        people should be most concerned about in regards 
+                        to how population size is or isn't related to crime 
+                        prevalence."),
+
                         # Organize by sidebars
-                        sidebarLayout(
+                      sidebarLayout(
+                        
+                        sidebarPanel(
                           
-                          sidebarPanel(
+                          # User inputs
+                          sliderInput("year.choice", "Select a Year", 
+                                      min = 2005, max = 2016, step = 1,
+                                      value = 2005,
+                                      sep = ""),
                             
-                            # User inputs
-                            sliderInput("year.choice", "Select a Year", 
-                                        min = 2005, max = 2016, step = 1,
-                                        value = 2005,
-                                        sep = ""),
+                          selectInput("metric.choice", "Select a Metric", 
+                                      choices = c("Number of Crimes", 
+                                                  "Rate of Crimes Per 
+                                                  100,000"),
+                                      selected = "Number of Crimes"),        
                             
-                            selectInput("metric.choice", "Select a Metric", 
-                                        choices = c("Number of Crimes", 
-                                                    "Rate of Crimes Per 
-                                                    100,000"),
-                                        selected = "Number of Crimes"),        
-                            
-                            selectInput("crime.choice", "Select a Crime", 
-                                        choices = c("Violent crime",
-                                                    "Murder and nonnegligent manslaughter",
-                                                    "Robbery",
-                                                    "Aggravated assault",
-                                                    "Property crime",
-                                                    "Burglary",
-                                                    "Larceny theft",
-                                                    "Motor vehicle theft",
-                                                    "Arson"),
-                                        selected = "Violent")
+                          selectInput("crime.choice", "Select a Crime", 
+                                      choices = c("Violent crime",
+                                                  "Murder and nonnegligent manslaughter",
+                                                  "Robbery",
+                                                  "Aggravated assault",
+                                                  "Property crime",
+                                                  "Burglary",
+                                                  "Larceny theft",
+                                                  "Motor vehicle theft",
+                                                  "Arson"),
+                                      selected = "Violent")
                           ),
                           
                           # Contains plot output with click interactions
-                          mainPanel(
-                            
-                            plotOutput('population.plot', 
-                                       click = "plot_click"),
-                            verbatimTextOutput("x_value"),
-                            p("Based on the ", 
-                              textOutput("metric.choice", inline = TRUE), 
-                              " of ", 
-                              textOutput("pop.crime.choice", inline = TRUE),
-                              " in ", textOutput("population.year", 
-                                                 inline = TRUE), 
-                              " the value of concern is ", 
-                              textOutput("sig.value", inline = TRUE), 
-                              ". This crime value comes from cities that
-                              have a population size of ", 
-                              textOutput("pop.size", inline = TRUE))
+                        mainPanel(
+                          
+                          plotOutput('population.plot', 
+                                      click = "plot_click"),
+                          verbatimTextOutput("x_value"),
+                          p("Based on the ", 
+                            textOutput("metric.choice", inline = TRUE), 
+                            " of ", 
+                            textOutput("pop.crime.choice", inline = TRUE),
+                            " in ", textOutput("population.year", 
+                                                inline = TRUE), 
+                            " the value of concern is ", 
+                            textOutput("sig.value", inline = TRUE), 
+                            ". This crime value comes from cities that
+                            have a population size of ", 
+                            textOutput("pop.size", inline = TRUE))
                           )
                         )
-                      )
-                    ),
+                      ),
              
              ##############
              ### Part 2 ###
              ##############
              # Create tab for Firearms and Murder in the US
-             tabPanel("Firearms and Murder in the United States",
-                      sidebarLayout(
-                        sidebarPanel(
-                          
-                          # Create drop down menu for choosing a states
-                          selectInput("states", label = "Choose a State:", 
-                                      multiple = FALSE, 
-                                      selected = "Washington")
-                          ),
-                        mainPanel(
-                          br(), # Insert break
-                          p(tags$strong("Introduction:"),"A question many 
+             tabPanel("Firearms and Murder",
+                      h2("Firearm and Murders By State"),
+                      
+                      p(tags$strong("Introduction:"),"A question many 
                           Americans are think about due to recent events is  
                           whether or not our gun laws need to be more strict.
                           Would this prevent mass shootings, murders, and 
                           overall violence? The data below compares the total  
                           amount of murders in a state, and whether the murder 
                           was committed with a firearm or not."),
+                      
+                      sidebarLayout(
+                        sidebarPanel(
                           
-                          br(), # Insert break
+                          # Create drop down menu for choosing a states
+                          selectInput("states", label = "Choose a State:",
+                                      choices = join.final$State,
+                                      multiple = FALSE,
+                                      selected = "Washington")
+                           ),
+                        mainPanel(
                           
                           plotOutput("plot"), width = 8,
                           
@@ -346,7 +342,7 @@ ui <- fluidPage(theme = shinytheme("united"),
                           br(),
                           
                           # Writes a disclaimer message
-                          m(p(strong("Disclaimer: "), "The categories above 
+                          em(p(strong("Disclaimer: "), "The categories above 
                             were provided by the FBI publications. It does not
                             include all the hate crimes against each group.
                             Additionally, the visualization above does not 
