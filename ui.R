@@ -29,12 +29,8 @@ ui <- fluidPage(
 
                    sidebarPanel(
                     
-                     # Create drop down menu for choosing a state
-                     
-                     # Create radio button for total murders and total firearms
-                     radioButtons("total.choice", label = "Choose a Total", choices = list("Total Murders by Firearms" = "Total.Firearms", "Total Murders in State" = "Total")),
-                     
-                     selectInput("states", label = "Choose a State:", choices = join.final$State, multiple = FALSE, selected = "washington")
+                     # Create drop down menu for choosing a states
+                     selectInput("states", label = "Choose a State:", choices = join.final$State, multiple = FALSE, selected = "Washington")
                      
                    ),
                    mainPanel(
@@ -56,7 +52,11 @@ ui <- fluidPage(
                         tags$li ("Citizens that exercise their right to bear arms"),
                         tags$li ("Crime within the States")
                         ),
-                     br()
+                     br(),
+                     
+                     textOutput("analysis")
+                     
+                      
                      
                    )
                    

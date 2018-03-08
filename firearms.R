@@ -4,6 +4,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(maps)
+library(reshape2)
 
 
 # Read in all of the year data tables
@@ -174,21 +175,28 @@ join14.15 <- full_join(join13.14, twenty.15.totals, by = "State")
 join.final <- full_join(join14.15, twenty.16.totals, by = "State") %>% 
   filter(State != "District of Columbia", State != "Virgin Islands", State != "Guam", State != "U.S. Virgin Islands", State != "")
 
-# Remove total.firearms from column names to prepare for gather
-names(join.final) <- sub("Total.Firearms.", "", names(join.final))
+# Create table for murders only
+murders <- join.final %>% 
+  select(State, starts_with("Total.Murders"))
 
-# Gather for years and total firearms
-gather.firearms <- gather(join.final, key = "Year", value = "Total.Firearms", starts_with(as.character(2)))
+# Rename to years 
+names(murders) <- sub("Total.Murders.", "", names(murders))
 
+# Gather by year and total murders
+murders.gather <- gather(murders, key = "Year", value = "Total.Murders", 2:14)
 
+# Create table for firearms only
+firearms <- join.final %>% 
+  select(State, starts_with("Total.Firearms."))
 
 # Remove total.murders to prepare for gather
-names(gather.firearms) <- sub("Total.Murders.", "", names(gather.firearms))
+names(firearms) <- sub("Total.Firearms.", "", names(firearms))
 
 # Gather in year and total.murders 
-gather.final <- gather(gather.firearms, key = "Year", value = "Total.Murders", starts_with(as.character(2)))
+gather.firearms <- gather(firearms, key = "Year", value = "Total.Firearms", 2:14)
 
-
+# Join firearms and murders by state and year now
+join.firearms.murders <- full_join(gather.firearms, murders.gather, by = c("State" = "State", "Year" = "Year"))
 
 
 
