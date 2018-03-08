@@ -4,7 +4,7 @@ library(shinyBS)
 library(plotly)
 library(shiny)
 library(maps)
-source("population-size-data.R")
+source("data/population-size-data.R")
 
 server <- function(input, output) {
   # Redudant Code Here
@@ -113,7 +113,7 @@ server <- function(input, output) {
     read.csv("data/violent_county_crimes_all_years.csv", 
              stringsAsFactors = FALSE)
   
-  # Returns the chosen crime type
+  # Returns the chosen crime type symbol
   chosen.crime <- reactive({
     col.name <- input$select.crime
     col.name.sym <- rlang::sym(col.name)
@@ -171,6 +171,13 @@ server <- function(input, output) {
     return(crime.report.count)
   })
   
+  # Returns the chosen crime 
+  chosen.crime.text <- reactive({
+    chosen.crime <- gsub("\\.", " ", input$select.crime)
+    
+    return(chosen.crime)
+  })
+  
   # Returns a color-coded map of the counties within a chosen state
   # based on their crime reporting count
   output$county.plot <- renderPlot({
@@ -192,12 +199,42 @@ server <- function(input, output) {
     return(statement)
   })
   
+  # Returns the visualization's title
   output$map.title <- renderText({
-    chosen.crime <- gsub("\\.", " ", input$select.crime)
-    title <- paste0(input$slide.year, " ", chosen.crime, 
+    title <- paste0(input$slide.year, " ", chosen.crime.text(), 
                     " Reports in ", input$select.state)
     
     return(title)
+  })
+  
+  # Returns the analysis statement
+  output$analysis.statement <- renderText({
+    county <- data.chosen.year() 
+    county.most.crimes <- county[which.max(county$Chosen_Year_Crime),]
+    county.most.crimes.name <- county.most.crimes[1, 1]
+    county.most.crimes.count <- county.most.crimes[1, 2]
+    
+    county.least.crimes <- county[which.min(county$Chosen_Year_Crime),]
+    county.least.crimes.name <- county.least.crimes[1, 1]
+    county.least.crimes.count <- county.least.crimes[1, 2]
+    
+    county.diff <- county.most.crimes.count - county.least.crimes.count
+    
+    statement <- paste0("In ", input$select.state, " during ", 
+                        input$slide.year, 
+                        ", the county with the most reports for ",
+                        tolower(chosen.crime.text()), " was ", 
+                        county.most.crimes.name, " county with ", 
+                        county.most.crimes.count, 
+                        " reports. The county with the least reports for ", 
+                        tolower(chosen.crime.text()), " was ", 
+                        county.least.crimes.name, " county with ", 
+                        county.least.crimes.count, 
+                        " reports, which had ", county.diff, 
+                        " less crime reports than ", 
+                        county.most.crimes.name, " county.")
+    
+    return(statement)
   })
   
   ##############
