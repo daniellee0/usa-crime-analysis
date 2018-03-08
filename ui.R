@@ -43,9 +43,10 @@ ui <- fluidPage(
                 # Include a title
                 titlePanel("Hate Crime Statistics"),
                 
+                # introduce the section
                 p(strong("Introduction: "), "This section compares the
                   number of incidents for hate crimes against 
-                  different categories from 2005 to 2016. The question we
+                  different populations from 2005 to 2016. The question we
                   hope to answer is how do the trends we see over time
                   correspond to real world events? These trends should give 
                   individuals a better sense of the tensions that exist 
@@ -58,7 +59,7 @@ ui <- fluidPage(
                   
                   sidebarPanel(
                     
-                    # A slectInput labeled "Bias Motivation", with choices 
+                    # A slectInput labeled "Category", with choices 
                     # "Race", "Religion", "Sexual Orientaiton" and "Disability"
                     selectInput(inputId = "category",
                                 label = "Category:",
@@ -74,22 +75,26 @@ ui <- fluidPage(
                     
                     # A line graph showing the trend of hate crime incidents
                     plotOutput('hatecrime'),
+                    # Analysis paragraph for Race graph
                     p(strong("Race: "), "The graph shows a steady trend
                       for most of the ethnic groups. However, there is 
                       a dramatic drop for hate crimes against African
                       Americans starting from 2008, which is when president 
                       Obama was elected, until 2016.", 
                       align = "left"),
+                    # Analysis paragraph for Religion graph
                     p(strong("Religion: "), "The graph shows that anti-islamic
                       incidents increased dramaticly after 2014, which is when 
                       the Islamic State seized large swathes of territory in
                       Syria and Iraq. On the other hand, anti-Jewish incidents
                       had dropped since 2008.", 
                       align = "left"),
+                    # Analysis paragraph for Sexual Orientation graph
                     p(strong("Sexual Orientation: "), "The graph shows 
                       that the number of anti-homosexual incidents dropped steadily
                       since 2011 when New York became the largest state to allow
                       same-sex marriage.", align = "left"),
+                    # Analysis paragraph for Disability graph
                     p(strong("Disability: "), "The graph shows 
                       a huge drop for anti-mental disability incidents in 2010.
                       The year in which The Equality Act was passed

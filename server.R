@@ -51,6 +51,8 @@ server <- function(input, output) {
   # read in the hate crime data from 2005-2016
   source("data/hate-crime-data.R")
   
+  # filter the data by category, flip rows and columns and melt the data frame
+  # in order to plot line graph
   filtered <- reactive({
     table <- hatecrime[hatecrime$Category == input$category, c("Bias.motivation", 2005:2016)]
     hatecrime.data <- data.frame(t(table[-1]))
@@ -60,6 +62,7 @@ server <- function(input, output) {
     return(melted)
   })
   
+    # create the line graph 
     output$hatecrime <- renderPlot({
     ggplot(data = filtered(), aes(x = year, y = value, group = variable)) +
         geom_line() +

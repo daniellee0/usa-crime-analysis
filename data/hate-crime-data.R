@@ -6,6 +6,7 @@ library('maps')
 library('shinythemes')
 library('reshape2')
 
+# read in the hate crime data for each year
 hatecrime.2005 <- read.csv('data/hatecrime2005.csv', fileEncoding = "UTF-8-BOM")
 hatecrime.2006 <- read.csv('data/hatecrime2006.csv', fileEncoding = "UTF-8-BOM")
 hatecrime.2007 <- read.csv('data/hatecrime2007.csv', fileEncoding = "UTF-8-BOM")
