@@ -1,5 +1,3 @@
-# df.list <- list(df1,df2,...)
-# res <- lapply(df.list, function(x) rowMeans(subset(x, select = c(start, stop)), na.rm = TRUE))
 library(plyr)
 library(dplyr)
 
@@ -177,5 +175,3 @@ population.size.2016 <- read.csv("data/population-size-2016.csv", stringsAsFacto
 population.size <- rbind.fill(population.size.2005, population.size.2006, population.size.2007, population.size.2008, population.size.2009
                       , population.size.2010, population.size.2011, population.size.2012, population.size.2013, population.size.2014
                       , population.size.2015, population.size.2016)
-#apply or sapply the slice function 
-#rbind(df, df)
